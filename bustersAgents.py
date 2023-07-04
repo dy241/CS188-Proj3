@@ -119,35 +119,3 @@ class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
 
     def chooseAction(self, gameState):
         return KeyboardAgent.getAction(self, gameState)
-
-from distanceCalculator import Distancer
-from game import Actions
-from game import Directions
-
-class GreedyBustersAgent(BustersAgent):
-    "An agent that charges the closest ghost."
-
-    def registerInitialState(self, gameState: busters.GameState):
-        "Pre-computes the distance between every two points."
-        BustersAgent.registerInitialState(self, gameState)
-        self.distancer = Distancer(gameState.data.layout, False)
-    
-    ########### ########### ###########
-    ########### QUESTION 8  ###########
-    ########### ########### ###########
-
-    def chooseAction(self, gameState: busters.GameState):
-        """
-        First computes the most likely position of each ghost that has
-        not yet been captured, then chooses an action that brings
-        Pacman closest to the closest ghost (according to mazeDistance!).
-        """
-        pacmanPosition = gameState.getPacmanPosition()
-        legal = [a for a in gameState.getLegalPacmanActions()]
-        livingGhosts = gameState.getLivingGhosts()
-        livingGhostPositionDistributions = \
-            [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
-             if livingGhosts[i+1]]
-        "*** YOUR CODE HERE ***"
-        raiseNotDefined()
-        "*** END YOUR CODE HERE ***"

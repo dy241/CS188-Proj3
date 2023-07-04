@@ -12,7 +12,7 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
-STUDENT_CODE_DEFAULT = 'factorOperations.py,inference.py,bustersAgents.py'
+STUDENT_CODE_DEFAULT = 'factorOperations.py,inference.py'
 PROJECT_TEST_CLASSES = 'bayesHMMTestClasses.py'
-PROJECT_NAME = 'Project 4: Bayes Nets and HMMs'
+PROJECT_NAME = 'Project 5: Bayes Nets'
 BONUS_PIC = False

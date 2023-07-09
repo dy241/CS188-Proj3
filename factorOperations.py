@@ -93,7 +93,7 @@ def joinFactors(factors: List[Factor]):
     if len(factors) > 1:
         intersect = functools.reduce(lambda x, y: x & y, setsOfUnconditioned)
         if len(intersect) > 0:
-            print("Factor failed joinFactors typecheck: ", factor)
+            print("Factor failed joinFactors typecheck: ", factors)
             raise ValueError("unconditionedVariables can only appear in one factor. \n"
                     + "unconditionedVariables: " + str(intersect) + 
                     "\nappear in more than one input factor.\n" + 
@@ -102,7 +102,36 @@ def joinFactors(factors: List[Factor]):
 
 
     "*** YOUR CODE HERE ***"
-    raiseNotDefined()
+    # join two factors at a time and recursively do
+    factors = list(factors)
+    if len(factors) > 2:
+        return joinFactors([factors[0], joinFactors(factors[1:])])
+    if len(factors) == 1:
+        return factors[0]
+    f0 = factors[0]
+    f1 = factors[1]
+
+    uncond = set()
+    cond = set()
+    vdd = f0.variableDomainsDict()
+    for i in f0.unconditionedVariables():
+        uncond.add(i)
+    for i in f1.unconditionedVariables():
+        uncond.add(i)
+    for i in f0.conditionedVariables():
+        if not i in uncond:
+            cond.add(i)
+    for i in f1.conditionedVariables():
+        if not i in uncond:
+            cond.add(i)
+    newf = Factor(uncond, cond, vdd)
+    all = newf.getAllPossibleAssignmentDicts()
+
+    for assign in all:
+        p = f0.getProbability(assign) * f1.getProbability(assign)
+        newf.setProbability(assign, p)
+    return newf
+    
     "*** END YOUR CODE HERE ***"
 
 ########### ########### ###########
@@ -153,7 +182,20 @@ def eliminateWithCallTracking(callTrackingList=None):
                     "unconditionedVariables: " + str(factor.unconditionedVariables()))
 
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        uncond = factor.unconditionedVariables()
+        uncond.remove(eliminationVariable)
+        cond = factor.conditionedVariables()
+        vdd = factor.variableDomainsDict()
+        edom = vdd[eliminationVariable]
+        newf = Factor(uncond, cond, vdd)
+        for assign in newf.getAllPossibleAssignmentDicts():
+            tot = 0
+            for evar in edom:
+                assign[eliminationVariable] = evar
+                tot += factor.getProbability(assign)
+            assign.pop(eliminationVariable)
+            newf.setProbability(assign, tot)
+        return newf
         "*** END YOUR CODE HERE ***"
 
     return eliminate

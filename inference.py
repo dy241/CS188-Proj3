@@ -61,7 +61,18 @@ def constructBayesNet(gameState: hunters.GameState):
     variableDomainsDict = {}
 
     "*** YOUR CODE HERE ***"
-    raiseNotDefined()
+    variables.extend([PAC, GHOST0, GHOST1, OBS0, OBS1])
+    edges.extend([(PAC, OBS0), (PAC, OBS1), (GHOST0, OBS0), (GHOST1, OBS1)])
+    valuesloc = []
+    for i in range(X_RANGE):
+        for j in range(Y_RANGE):
+            valuesloc.append((i,j))
+    variableDomainsDict[PAC] = valuesloc
+    variableDomainsDict[GHOST0] = valuesloc
+    variableDomainsDict[GHOST1] = valuesloc
+    valuesdist = [i for i in range(X_RANGE+Y_RANGE+MAX_NOISE-1)]
+    variableDomainsDict[OBS0] = valuesdist
+    variableDomainsDict[OBS1] = valuesdist
     "*** END YOUR CODE HERE ***"
 
     net = bn.constructEmptyBayesNet(variables, edges, variableDomainsDict)
@@ -182,7 +193,23 @@ def inferenceByVariableEliminationWithCallTracking(callTrackingList=None):
             eliminationOrder = sorted(list(eliminationVariables))
 
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        currentFactorsList = bayesNet.getAllCPTsWithEvidence(evidenceDict)
+        for eliminationVariable in eliminationOrder:
+            currentFactorsList, joinedFactor = joinFactorsByVariable(currentFactorsList, eliminationVariable)
+            if len(joinedFactor.unconditionedVariables()) == 1:
+                continue
+            joinedFactor = eliminate(joinedFactor, eliminationVariable)
+            currentFactorsList.append(joinedFactor)
+        fullJoint = joinFactors(currentFactorsList)    
+
+        # normalize so that the probability sums to one
+        # the input factor contains only the query variables and the evidence variables, 
+        # both as unconditioned variables
+        queryConditionedOnEvidence = normalize(fullJoint)
+        # now the factor is conditioned on the evidence variables
+
+        # the order is join on all variables, then eliminate on all elimination variables
+        return queryConditionedOnEvidence
         "*** END YOUR CODE HERE ***"
 
 
